@@ -1,0 +1,37 @@
+-------------Project & CostCenter is Mandatory starts--------------------------
+IF (:transaction_type=(n'A') and :object_type='67') THEN
+Declare RecCount varchar(50);
+
+SELECT  Count(*) into RecCount
+from WTR1 T0 Left Join OWTR T1 On T0."DocEntry"=T1."DocEntry" Where T0."DocEntry"=:list_of_cols_val_tab_del
+and (T0."Project" is null or T0."OcrCode" is null or T0."OcrCode2" is null or T0."OcrCode3" is null or T0."OcrCode4" is null 
+or T0."OcrCode5" is null);
+
+IF :RecCount>0 and (SELECT ifnull(STRING_AGG(T0."LineNum" ,' , ' Order by T0."DocEntry"),'') from WTR1 T0 Where T0."DocEntry"=:list_of_cols_val_tab_del and (T0."Project" is null or T0."Project"=''))<>''  THEN 
+error := 10015;
+error_message := 'Project is Mandatory in line: ' || (SELECT STRING_AGG(T0."LineNum" ,' , ') from WTR1 T0 Where T0."DocEntry"=:list_of_cols_val_tab_del  and (T0."Project" is null or T0."Project"='')) ;
+
+ElseIF :RecCount>0 and (Select "DimActive" from ODIM Where "DimCode"='1')='Y' and (SELECT ifnull(STRING_AGG(T0."LineNum" ,' , ' Order by T0."DocEntry"),'') from WTR1 T0 Where T0."DocEntry"=:list_of_cols_val_tab_del and (T0."OcrCode" is null or T0."OcrCode"=''))<>'' THEN 
+error := 10016;
+error_message := (Select "DimDesc" from ODIM Where "DimCode"='1')||' is Mandatory in line: ' || (SELECT STRING_AGG(T0."LineNum" ,' , ') from WTR1 T0 Where T0."DocEntry"=:list_of_cols_val_tab_del  and (T0."OcrCode" is null or T0."OcrCode"='')) ;
+
+ElseIF :RecCount>0 and (Select "DimActive" from ODIM Where "DimCode"='2')='Y' and (SELECT ifnull(STRING_AGG(T0."LineNum" ,' , ' Order by T0."DocEntry"),'') from WTR1 T0 Where T0."DocEntry"=:list_of_cols_val_tab_del and (T0."OcrCode2" is null or T0."OcrCode2"=''))<>'' THEN 
+error := 10017;
+error_message := (Select "DimDesc" from ODIM Where "DimCode"='2')||' is Mandatory in line: ' || (SELECT STRING_AGG(T0."LineNum" ,' , ') from WTR1 T0 Where T0."DocEntry"=:list_of_cols_val_tab_del  and (T0."OcrCode2" is null or T0."OcrCode2"='')) ;
+
+ElseIF :RecCount>0 and (Select "DimActive" from ODIM Where "DimCode"='3')='Y' and (SELECT ifnull(STRING_AGG(T0."LineNum" ,' , ' Order by T0."DocEntry"),'') from WTR1 T0 Where T0."DocEntry"=:list_of_cols_val_tab_del and (T0."OcrCode3" is null or T0."OcrCode3"=''))<>'' THEN 
+error := 10018;
+error_message := (Select "DimDesc" from ODIM Where "DimCode"='3')||' is Mandatory in line:  ' || (SELECT STRING_AGG(T0."LineNum" ,' , ') from WTR1 T0 Where T0."DocEntry"=:list_of_cols_val_tab_del  and (T0."OcrCode3" is null or T0."OcrCode3"='')) ;
+
+ElseIF :RecCount>0 and (Select "DimActive" from ODIM Where "DimCode"='4')='Y' and (SELECT ifnull(STRING_AGG(T0."LineNum" ,' , ' Order by T0."DocEntry"),'') from WTR1 T0 Where T0."DocEntry"=:list_of_cols_val_tab_del and (T0."OcrCode4" is null or T0."OcrCode4"=''))<>'' THEN 
+error := 10019;
+error_message := (Select "DimDesc" from ODIM Where "DimCode"='4')||' is Mandatory in line:  ' || (SELECT STRING_AGG(T0."LineNum" ,' , ') from WTR1 T0 Where T0."DocEntry"=:list_of_cols_val_tab_del  and (T0."OcrCode4" is null or T0."OcrCode4"='')) ;
+ElseIF :RecCount>0 and (Select "DimActive" from ODIM Where "DimCode"='5')='Y' and (SELECT ifnull(STRING_AGG(T0."LineNum" ,' , ' Order by T0."DocEntry"),'') from WTR1 T0 Where T0."DocEntry"=:list_of_cols_val_tab_del and (T0."OcrCode5" is null or T0."OcrCode5"=''))<>'' THEN 
+error := 10020;
+error_message := (Select "DimDesc" from ODIM Where "DimCode"='5' )||' is Mandatory in line:  ' || (SELECT STRING_AGG(T0."LineNum" ,' , ') from WTR1 T0 Where T0."DocEntry"=:list_of_cols_val_tab_del  and (T0."OcrCode5" is null or T0."OcrCode5"='')) ;
+
+END IF;
+
+End IF;
+-------------Project & CostCenter is Mandatory Ends--------------------------
+

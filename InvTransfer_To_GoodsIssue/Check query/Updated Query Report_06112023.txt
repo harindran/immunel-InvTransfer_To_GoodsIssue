@@ -1,0 +1,12 @@
+Select distinct T0."DocNum" "Inventory Transfer #",T0."DocEntry" "Inventory Transfer DocEntry",T0."DocDate",T0."ToWhsCode" "To Warehouse",
+(Select "DocEntry" from OIGE Where "U_AT_InvEntry"=T0."DocEntry") "Goods Issue Entry",
+Case When (Select "DocEntry" from OIGE Where "U_AT_InvEntry"=T0."DocEntry") is not null then 0 Else T1."U_ErrId" End "Error Code",
+Case When (Select "DocEntry" from OIGE Where "U_AT_InvEntry"=T0."DocEntry") is not null then '' Else Cast(T1."U_ErrDesc" as varchar) End
+ "Error Description",
+ Case When (Select "DocEntry" from OIGE Where "U_AT_InvEntry"=T0."DocEntry") is not null then 'Y' Else T1."U_Flag" End "Flag",
+ Case When (Select "DocEntry" from OIGE Where "U_AT_InvEntry"=T0."DocEntry") is not null then 'Success' Else T1."U_Status" End "Status"
+from OWTR T0 left Join "@ATPL_ITGI" T1 On T0."DocEntry"=T1."U_BaseEntry" 
+Left Join WTR1 T2 On T0."DocEntry"=T2."DocEntry"
+Where T0."CANCELED"='N' and T0."DocDate">='20231020' and T0."ToWhsCode" in ('F & O','R&D','QC') and T2."Quantity">0
+and T0."DocDate" between [%0] and [%1]
+Order By T0."DocDate" desc
